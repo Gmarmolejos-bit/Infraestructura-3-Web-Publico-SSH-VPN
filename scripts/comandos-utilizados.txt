@@ -1,1 +1,194 @@
+Infraestructura 3 - Comandos utilizados
+
+========================================
+CISCO SW-L3-USUARIOS
+========================================
+
+# Entrar a modo privilegiado
+enable
+
+# Ver tabla de rutas
+show ip route
+
+# Ver estado de interfaces
+show interfaces status
+
+# Ver VLANs configuradas
+show vlan brief
+
+# Ver running-config
+show running-config
+
+
+========================================
+PC-USUARIO-3
+========================================
+
+# Obtener direccionamiento por DHCP
+ip dhcp
+
+# Ver direccionamiento IP
+show ip
+
+# Realizar traceroute hacia el servidor
+trace 10.12.48.130
+
+
+========================================
+CLIENTE-VPN-3
+========================================
+
+# Ver direccionamiento
+ip addr show eth0
+
+# Ver tabla de rutas
+ip route
+
+# Configuración temporal en VLAN 10
+ip addr flush dev eth0
+ip addr add 10.12.48.11/25 dev eth0
+ip link set eth0 up
+ip route add default via 10.12.48.1
+
+# Configurar DNS
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
+# Pruebas de conectividad
+ping -c 4 10.12.48.1
+ping -c 4 203.0.113.3
+ping -c 4 8.8.8.8
+ping -c 4 deb.debian.org
+
+# Instalar StrongSwan
+apt update
+apt install -y strongswan-swanctl charon-systemd
+apt install -y strongswan strongswan-starter
+
+# Arrancar StrongSwan
+ipsec start
+
+# Ver estado de StrongSwan
+ipsec statusall
+
+# Ver algoritmos disponibles
+ipsec listalgs | grep -i des
+ipsec listalgs | grep -Ei 'SHA1|SHA256|ECP_384|ECP_521|ECP'
+
+# Verificar parámetros IKE/ESP cargados
+grep -E '^[[:space:]]*(ike|esp)=' /etc/ipsec.conf
+
+# Reiniciar StrongSwan
+ipsec restart
+
+# Levantar VPN
+ipsec up VPN_REMOTA_3
+
+# Verificar VPN activa
+ipsec statusall
+
+# Prueba SSH sin VPN
+ssh -o ConnectTimeout=5 gerson@10.12.48.130
+
+# Eliminar clave SSH antigua
+ssh-keygen -f "/root/.ssh/known_hosts" -R "10.12.48.130"
+
+# Prueba SSH con VPN
+ssh gerson@10.12.48.130
+
+
+========================================
+WEB-SERVER-3
+========================================
+
+# Configurar IP del servidor
+ip addr add 10.12.48.130/28 dev eth0
+ip link set eth0 up
+ip route add default via 10.12.48.129
+
+# Ver direccionamiento y rutas
+ip addr show eth0
+ip route
+
+# Configurar DNS
+echo "nameserver 8.8.8.8" > /etc/resolv.conf
+
+# Probar conectividad
+ping -c 4 10.12.48.129
+ping -c 4 8.8.8.8
+ping -c 4 archive.ubuntu.com
+
+# Verificar servicio HTTPS
+ss -lntp | grep :443
+
+# Validar e iniciar Nginx
+nginx -t
+service nginx start
+
+# Instalar SSH
+apt update
+apt install -y openssh-server
+
+# Iniciar SSH
+mkdir -p /run/sshd
+service ssh start
+
+# Verificar puerto SSH
+ss -lntp | grep :22
+
+# Crear usuario para acceso SSH
+adduser gerson
+
+# Verificar usuario
+id gerson
+
+
+========================================
+WEBTERM-1 / PRUEBA EXTERNA
+========================================
+
+# Configuración temporal en red pública
+ip addr add 203.0.113.4/29 dev eth0
+ip link set eth0 up
+
+# Verificar conectividad con FortiGate
+ping -c 4 203.0.113.3
+
+# Prueba HTTPS pública hacia WEB-SERVER-3
+curl -vk https://203.0.113.3
+
+
+========================================
+FORTIGATE FG-3
+========================================
+
+# Ver interfaces
+show system interface
+
+# Ver políticas
+show firewall policy
+
+# Ver tabla de rutas
+get router info routing-table all
+
+# Ver configuración de Phase 1
+show vpn ipsec phase1-interface
+
+# Ver configuración de Phase 2
+show vpn ipsec phase2-interface
+
+# Ver zona asociada a la VPN
+show system zone
+
+# Probar conectividad hacia WEB-SERVER-3
+execute ping 10.12.48.130
+
+# Debug IKE
+diagnose vpn ike log filter rem-addr4 10.12.48.11
+diagnose debug console timestamp enable
+diagnose debug application ike -1
+diagnose debug enable
+
+# Desactivar debug
+diagnose debug disable
+diagnose debug reset
 
