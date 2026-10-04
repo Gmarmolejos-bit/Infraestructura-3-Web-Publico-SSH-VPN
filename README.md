@@ -4,7 +4,7 @@ Laboratorio de Seguridad de Redes en GNS3 utilizando FortiGate, un equipo de red
 
 ## 🎥 Video demostrativo
 
-[Ver video demostrativo](ENLACE_DEL_VIDEO)
+https://itlaedudo.sharepoint.com/:v:/s/Pratica/IQBt5YUs5qnCTpgkS3r9wpDMAbt-qfYjUTs5SvNDZ7Xvjoo?e=ZTOtT5&nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D
 
 ---
 
